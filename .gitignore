@@ -44,3 +44,5 @@ typings
 !.vscode/tasks.json
 !.vscode/launch.json
 .history/*
+.aws/credentials
+.aws/config
