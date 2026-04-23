@@ -10,7 +10,11 @@ cors:
   exposed-headers: "*"
 
 aws:
-  region: eu-west-2
+  region: us-west-2
+  s3:
+    buckets:
+      customer: fs-amigoscode-project-customer-test
+
 
 management:
   endpoints:
