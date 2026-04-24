@@ -135,6 +135,7 @@ public class CustomerService {
             throw new RuntimeException(e);
         }
         //TODO: STORE IMAGE TO POSTGRES
+        customerDao.updateCustomerProfileImageId(profileImageId, customerId);
     }
 
     public byte[] getCustomerProfileImage (Integer customerId) {
@@ -143,13 +144,16 @@ public class CustomerService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "customer with id [%s] not found".formatted(customerId)
                 ));
-        
-        // TODO: Check if profile picture is empty or null
-        var profilePictureId = "TODO";
+
+        if (customer.profileImageId().isBlank()) {
+            throw new ResourceNotFoundException(
+                    "customer with id [%s] profile image not found".formatted(customerId)
+            );
+        }
 
         return s3Service.getObject(
                 s3Buckets.getCustomer(),
-                "profile-images/%s/%s".formatted(customerId, profilePictureId)
+                "profile-images/%s/%s".formatted(customerId, customer.profileImageId())
         );
     }
 }
