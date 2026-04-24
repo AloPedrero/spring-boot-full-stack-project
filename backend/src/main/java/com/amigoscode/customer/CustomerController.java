@@ -63,7 +63,7 @@ public class CustomerController {
             @PathVariable("customerId") Integer customerId,
             @RequestParam("file") MultipartFile multipartFile
             ) {
-                customerService.uploadCustomerProfileImage(customerId, file);
+                customerService.uploadCustomerProfileImage(customerId, multipartFile);
     }
 
     @GetMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
