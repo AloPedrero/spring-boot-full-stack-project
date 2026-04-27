@@ -16,8 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({TestConfig.class})
-class CustomerRepositoryTest extends AbstractTestcontainers {
+@Import(TestConfig.class)
+class   CustomerRepositoryTest extends AbstractTestcontainers {
 
     @Autowired
     private CustomerRepository underTest;
