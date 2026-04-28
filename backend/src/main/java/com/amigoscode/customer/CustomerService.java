@@ -125,6 +125,7 @@ public class CustomerService {
     public void uploadCustomerProfileImage (Integer customerId, MultipartFile multipartFile) {
         checkIfCustomerExists(customerId);
         String profileImageId = UUID.randomUUID().toString();
+        System.out.println("profile image id: " + profileImageId);
         try {
             s3Service.putObject(
                     s3Buckets.getCustomer(),

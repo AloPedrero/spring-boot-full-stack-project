@@ -1,7 +1,7 @@
 import {Form, Formik, useField} from 'formik';
 import * as Yup from 'yup';
 import {Alert, AlertIcon, Box, Button, FormLabel, Input, Select, Stack, VStack, Image} from "@chakra-ui/react";
-import {saveCustomer, updateCustomer} from "../../services/client.js";
+import {saveCustomer, updateCustomer, uploadCustomerProfilePicture} from "../../services/client.js";
 import {successNotification, errorNotification} from "../../services/notification.js";
 import React, {useCallback} from 'react'
 import {useDropzone} from 'react-dropzone'
@@ -25,11 +25,23 @@ const MyTextInput = ({label, ...props}) => {
     );
 };
 
-function MyDropzone() {
+const MyDropzone = ({ customerId, fetchCustomers }) => {
     const onDrop = useCallback(acceptedFiles => {
-        // Do something with the files
+        const formData = new FormData();
+        formData.append("file", acceptedFiles[0])
+
+        uploadCustomerProfilePicture(
+            customerId,
+            formData
+        ).then(() => {
+            successNotification("Success", "Profile picture uploaded")
+            fetchCustomers()
+        }).catch(() => {
+            errorNotification("Error", "Profile picture failed upload")
+        })
     }, [])
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+
 
     return (
         <Box {...getRootProps()}
@@ -63,7 +75,7 @@ const UpdateCustomerForm = ({ fetchCustomers, initialValues, customerId }) => {
                     objectFit={"cover"}
                     src={""}
                 />
-                <MyDropzone/>
+                <MyDropzone customerId={customerId}/>
             </VStack>
             <Formik
                 initialValues={initialValues}
@@ -83,7 +95,7 @@ const UpdateCustomerForm = ({ fetchCustomers, initialValues, customerId }) => {
                     setSubmitting(true);
                     updateCustomer(customerId, updatedCustomer)
                         .then(res => {
-                            console.log(res);
+                            console.log();
                             successNotification(
                                 "Customer updated",
                                 `${updatedCustomer.name} was successfully updated`
