@@ -85,7 +85,7 @@ public class CustomerListDataAccessService implements CustomerDao {
 
     @Override
     public void updateCustomerProfileImageId(String profileImageId, Integer customerId) {
-        //TODO: implement this 🥺
+        // TODO: Implement this 😅
     }
 
 }

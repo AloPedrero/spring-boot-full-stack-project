@@ -61,7 +61,9 @@ public class Customer implements UserDetails {
     )
     private String password;
 
-    @Column(unique = true)
+    @Column(
+            unique = true
+    )
     private String profileImageId;
 
     public Customer() {
@@ -88,12 +90,7 @@ public class Customer implements UserDetails {
                     Integer age,
                     Gender gender,
                     String profileImageId) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.age = age;
-        this.gender = gender;
+        this(id, name, email, password, age, gender);
         this.profileImageId = profileImageId;
     }
 
@@ -149,17 +146,17 @@ public class Customer implements UserDetails {
         this.gender = gender;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
     public String getProfileImageId() {
         return profileImageId;
     }
 
     public void setProfileImageId(String profileImageId) {
         this.profileImageId = profileImageId;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -194,6 +191,7 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
         return Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(email, customer.email) && Objects.equals(age, customer.age) && gender == customer.gender && Objects.equals(password, customer.password) && Objects.equals(profileImageId, customer.profileImageId);
@@ -216,6 +214,4 @@ public class Customer implements UserDetails {
                 ", profileImageId='" + profileImageId + '\'' +
                 '}';
     }
-
-
 }
