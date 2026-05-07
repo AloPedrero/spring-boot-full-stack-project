@@ -1,10 +1,10 @@
 import {Form, Formik, useField} from 'formik';
 import * as Yup from 'yup';
-import {Alert, AlertIcon, Box, Button, FormLabel, Input, Select, Stack, VStack, Image} from "@chakra-ui/react";
-import {saveCustomer, updateCustomer} from "../../services/client.js";
-import {successNotification, errorNotification} from "../../services/notification.js";
-import React, {useCallback} from 'react'
-import {useDropzone} from 'react-dropzone'
+import {Alert, AlertIcon, Box, Button, FormLabel, Image, Input, Stack, VStack} from "@chakra-ui/react";
+import {customerProfilePictureUrl, updateCustomer, uploadCustomerProfilePicture} from "../../services/client.js";
+import {errorNotification, successNotification} from "../../services/notification.js";
+import {useCallback} from "react";
+import {useDropzone} from "react-dropzone";
 
 const MyTextInput = ({label, ...props}) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
@@ -25,45 +25,57 @@ const MyTextInput = ({label, ...props}) => {
     );
 };
 
-function MyDropzone() {
+const MyDropzone = ({ customerId, fetchCustomers }) => {
     const onDrop = useCallback(acceptedFiles => {
-        // Do something with the files
+        const formData = new FormData();
+        formData.append("file", acceptedFiles[0])
+
+        uploadCustomerProfilePicture(
+            customerId,
+            formData
+        ).then(() => {
+            successNotification("Success", "Profile picture uploaded")
+            fetchCustomers()
+        }).catch(() => {
+            errorNotification("Error", "Profile picture failed upload")
+        })
     }, [])
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
     return (
         <Box {...getRootProps()}
-            width={"100%"}
-            textAlign={"center"}
-            border={"dashed"}
-            borderColor={"gray.200"}
-            borderRadius={"3xl"}
-            p={6}
-            rounded={"md"}
-
-        >
+             w={'100%'}
+             textAlign={'center'}
+             border={'dashed'}
+             borderColor={'gray.200'}
+             borderRadius={'3xl'}
+             p={6}
+             rounded={'md'}>
             <input {...getInputProps()} />
             {
                 isDragActive ?
-                    <p>Drop the files here ...</p> :
-                    <p>Drag 'n' drop some files here, or click to select files</p>
+                    <p>Drop the picture here ...</p> :
+                    <p>Drag 'n' drop picture here, or click to select picture</p>
             }
         </Box>
     )
 }
 
 // And now we can use these
-const UpdateCustomerForm = ({ fetchCustomers, initialValues, customerId }) => {
+const UpdateCustomerForm = ({fetchCustomers, initialValues, customerId}) => {
     return (
         <>
-            <VStack spacing={"5"} mb={"5"}>
+            <VStack spacing={'5'} mb={'5'}>
                 <Image
-                    borderRadius={"full"}
-                    boxSize={"150px"}
-                    objectFit={"cover"}
-                    src={""}
+                    borderRadius={'full'}
+                    boxSize={'150px'}
+                    objectFit={'cover'}
+                    src={customerProfilePictureUrl(customerId)}
                 />
-                <MyDropzone/>
+                <MyDropzone
+                    customerId={customerId}
+                    fetchCustomers={fetchCustomers}
+                />
             </VStack>
             <Formik
                 initialValues={initialValues}
@@ -90,13 +102,13 @@ const UpdateCustomerForm = ({ fetchCustomers, initialValues, customerId }) => {
                             )
                             fetchCustomers();
                         }).catch(err => {
-                            console.log(err);
-                            errorNotification(
-                                err.code,
-                                err.response.data.message
-                            )
+                        console.log(err);
+                        errorNotification(
+                            err.code,
+                            err.response.data.message
+                        )
                     }).finally(() => {
-                         setSubmitting(false);
+                        setSubmitting(false);
                     })
                 }}
             >
